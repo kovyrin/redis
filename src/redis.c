@@ -875,6 +875,7 @@ void initServerConfig() {
     server.repl_syncio_timeout = REDIS_REPL_SYNCIO_TIMEOUT;
     server.repl_serve_stale_data = 1;
     server.repl_down_since = time(NULL);
+    server.slave_allow_key_expires = 0;
 
     /* Double constants initialization */
     R_Zero = 0.0;

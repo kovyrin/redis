@@ -215,6 +215,10 @@ void loadServerConfig(char *filename) {
             }
         } else if (!strcasecmp(argv[0],"glueoutputbuf")) {
             redisLog(REDIS_WARNING, "Deprecated configuration directive: \"%s\"", argv[0]);
+        } else if (!strcasecmp(argv[0],"slave-allow-key-expires") && argc == 2) {
+            if ((server.slave_allow_key_expires = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
         } else if (!strcasecmp(argv[0],"rdbcompression") && argc == 2) {
             if ((server.rdbcompression = yesnotoi(argv[1])) == -1) {
                 err = "argument must be 'yes' or 'no'"; goto loaderr;
@@ -487,6 +491,11 @@ void configSetCommand(redisClient *c) {
 
         if (yn == -1) goto badfmt;
         server.repl_serve_stale_data = yn;
+    } else if (!strcasecmp(c->argv[2]->ptr,"slave-allow-key-expires")) {
+        int yn = yesnotoi(o->ptr);
+
+        if (yn == -1) goto badfmt;
+        server.slave_allow_key_expires = yn;
     } else if (!strcasecmp(c->argv[2]->ptr,"dir")) {
         if (chdir((char*)o->ptr) == -1) {
             addReplyErrorFormat(c,"Changing directory: %s", strerror(errno));
@@ -615,6 +624,11 @@ void configGetCommand(redisClient *c) {
     if (stringmatch(pattern,"appendonly",0)) {
         addReplyBulkCString(c,"appendonly");
         addReplyBulkCString(c,server.appendonly ? "yes" : "no");
+        matches++;
+    }
+    if (stringmatch(pattern,"slave-allow-key-expires",0)) {
+        addReplyBulkCString(c,"slave-allow-key-expires");
+        addReplyBulkCString(c,server.slave_allow_key_expires ? "yes" : "no");
         matches++;
     }
     if (stringmatch(pattern,"no-appendfsync-on-rewrite",0)) {

@@ -463,6 +463,7 @@ struct redisServer {
     /* Slave specific fields */
     char *masterauth;
     char *masterhost;
+    int slave_allow_key_expires;    /* True if we allow keys to expire on the slave w/o relying on replication */
     int masterport;
     int repl_ping_slave_period;
     int repl_timeout;

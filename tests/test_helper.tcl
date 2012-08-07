@@ -28,6 +28,7 @@ set ::all_tests {
     integration/replication
     integration/replication-2
     integration/replication-3
+    integration/replication-5
     integration/aof
     unit/pubsub
     unit/slowlog
